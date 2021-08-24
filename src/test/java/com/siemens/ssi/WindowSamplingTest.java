@@ -1,8 +1,7 @@
 package com.siemens.ssi;
 
-import com.google.common.collect.Lists;
-import com.siemens.ssi.TableFunctionScanRule.Config;
 import java.sql.SQLException;
+import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.plan.RelOptUtil;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;
@@ -24,15 +23,20 @@ public class WindowSamplingTest extends CalciteTest {
       log.info("optimized plan:\n" + RelOptUtil.toString(relRoot.rel, SqlExplainLevel.ALL_ATTRIBUTES));
     });
     Hook.PLANNER.addThread((VolcanoPlanner planner) -> {
-      planner.addRule(Config.DEFAULT.withMatchSchemas(Lists.newArrayList("ch")).toRule());
+      planner.addRule(TableSampleRule.Config.DEFAULT.toRule());
+      planner.addRule(TableFunctionScanRule.Config.DEFAULT.withMatchSchemas(Collections.singletonList("ch")).toRule());
     });
-    String sql = "SELECT * FROM (SELECT * from TABLE(\n"
-        + " TUMBLE (\n"
-        + "    TABLE ch.orders,\n"
-        + "    DESCRIPTOR(time_stamp),\n"
-        + "    INTERVAL '1' YEAR "
-        + " )) "
-        + ") TABLESAMPLE SYSTEM(10)";
+    Hook.JAVA_PLAN.addThread((String code) -> {
+      log.info("generated code: \n" + code);
+    });
+//    String sql = "SELECT * FROM (SELECT * from TABLE(\n"
+//        + " TUMBLE (\n"
+//        + "    TABLE ch.orders,\n"
+//        + "    DESCRIPTOR(time_stamp),\n"
+//        + "    INTERVAL '1' MONTH "
+//        + " )) "
+//        + ") TABLESAMPLE BERNOULLI(40) ";
+    String sql = "select * over (ORDER BY time_Stamp RANGE INTERVAL '1' HOUR PRECEDING) from ch.orders ";
     executeQuery(sql);
   }
 

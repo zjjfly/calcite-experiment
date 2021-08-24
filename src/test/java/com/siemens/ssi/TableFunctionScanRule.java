@@ -51,7 +51,7 @@ public class TableFunctionScanRule extends RelRule<TableFunctionScanRule.Config>
     List<RexNode> operands = tableFunc.getOperands();
     RexCall descriptor = (RexCall) operands.get(0);
     RexNode rowTime = descriptor.getOperands().get(0);
-    RexLiteral interval = (RexLiteral)operands.get(operands.size() - 1);
+    RexLiteral interval = (RexLiteral) operands.get(operands.size() - 1);
     BigDecimal value = (BigDecimal) interval.getValue();
     assert value != null;
     int n = value.intValue();
@@ -94,9 +94,10 @@ public class TableFunctionScanRule extends RelRule<TableFunctionScanRule.Config>
           if (call instanceof RexCall) {
             RexCall c = (RexCall) call;
             SqlOperator op = c.op;
-            if (op == SqlStdOperatorTable.TUMBLE||op==SqlStdOperatorTable.HOP||op==SqlStdOperatorTable.SESSION) {
+            if (op == SqlStdOperatorTable.TUMBLE || op == SqlStdOperatorTable.HOP
+                || op == SqlStdOperatorTable.SESSION) {
               List<RexNode> operands = c.getOperands();
-              RexLiteral op1 = (RexLiteral)operands.get(operands.size() - 1);
+              RexLiteral op1 = (RexLiteral) operands.get(operands.size() - 1);
               if (SqlTypeUtil.isInterval(op1.getType())) {
                 IntervalSqlType type = (IntervalSqlType) op1.getType();
                 SqlTypeName sqlTypeName = type.getSqlTypeName();

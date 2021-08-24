@@ -21,7 +21,7 @@ import ru.yandex.clickhouse.ClickHouseDriver;
 
 @Slf4j
 @TestInstance(Lifecycle.PER_CLASS)
-public class CalciteTest {
+public abstract class CalciteTest {
 
   protected CalciteConnection calciteConnection;
 
