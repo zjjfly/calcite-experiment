@@ -6,9 +6,6 @@ import org.apache.calcite.sql.type.OperandTypes;
 import org.apache.calcite.sql.type.ReturnTypes;
 import org.apache.calcite.sql.type.SqlTypeFamily;
 
-/**
- *
- */
 public class ClickHouseNativeFunctions {
 
   /**

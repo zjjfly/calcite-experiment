@@ -54,7 +54,6 @@ public class TableFunctionScanRule extends RelRule<TableFunctionScanRule.Config>
     RexLiteral interval = (RexLiteral) operands.get(operands.size() - 1);
     BigDecimal value = (BigDecimal) interval.getValue();
     assert value != null;
-    int n = value.intValue();
     IntervalSqlType intervalSqlType = (IntervalSqlType) interval.getType();
     RelSubset subset = (RelSubset) rel.getInput(0);
     RelOptTable table = new ArrayList<>(RelOptUtil.findTables(subset)).get(0);

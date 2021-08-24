@@ -1,7 +1,5 @@
 package com.siemens.ssi;
 
-import com.google.common.collect.Lists;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.SneakyThrows;
@@ -9,14 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.adapter.jdbc.JdbcRules.JdbcAggregate;
 import org.apache.calcite.adapter.jdbc.JdbcRules.JdbcProject;
 import org.apache.calcite.adapter.jdbc.JdbcTableScan;
+import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelOptRuleCall;
 import org.apache.calcite.plan.RelRule;
-import org.apache.calcite.rel.core.AggregateCall;
+import org.apache.calcite.plan.RelTraitSet;
 import org.apache.calcite.rel.core.TableScan;
 import org.apache.calcite.rel.logical.LogicalAggregate;
 import org.apache.calcite.rel.logical.LogicalProject;
 import org.apache.calcite.rel.logical.LogicalTableFunctionScan;
 import org.apache.calcite.rel.rules.TransformationRule;
+import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rex.RexCall;
 import org.apache.calcite.rex.RexInputRef;
@@ -25,8 +25,9 @@ import org.apache.calcite.rex.RexNode;
 import org.apache.calcite.sql.SqlDialect;
 import org.apache.calcite.sql.SqlOperator;
 import org.apache.calcite.sql.fun.SqlStdOperatorTable;
-import org.apache.calcite.sql.fun.SqlSumEmptyIsZeroAggFunction;
+import org.apache.calcite.sql.type.SqlTypeName;
 import org.apache.calcite.util.ImmutableBeans;
+import org.apache.calcite.util.Util;
 
 @Slf4j
 public class WindowAggregationRule extends RelRule<WindowAggregationRule.Config>
@@ -58,45 +59,33 @@ public class WindowAggregationRule extends RelRule<WindowAggregationRule.Config>
     if (tableScan.get(0) instanceof JdbcTableScan) {
       JdbcTableScan scan = (JdbcTableScan) tableScan.get(0);
       SqlDialect dialect = scan.jdbcTable.jdbcSchema.dialect;
-      List<RexNode> p = Lists.newArrayList();
       Map<Class<? extends SqlDialect>, SqlWindowStartEnd> sqlWindowStartEndMap = config.sqlWindowStartEnd();
       SqlWindowStartEnd sqlWindowStartEnd =
           sqlWindowStartEndMap.getOrDefault(dialect.getClass(), new ClickHouseSqlWindowStartEnd());
       List<RexNode> projects = project.getProjects();
       int size = scan.getRowType().getFieldList().size();
-      for (RexNode rexNode : projects) {
+      //替换window_start和window_end的
+      projects = Util.transform(projects, rexNode -> {
         RexInputRef inputRef = (RexInputRef) rexNode;
         if (inputRef.getIndex() >= size) {
           if (inputRef.getIndex() == size) {
-            p.add(sqlWindowStartEnd.windowStart(typeFactory, timeCol, interval));
+            return sqlWindowStartEnd.windowStart(typeFactory, timeCol, interval);
           }
           if (inputRef.getIndex() == size + 1) {
-            p.add(sqlWindowStartEnd.windowEnd(typeFactory, timeCol, interval));
+            return sqlWindowStartEnd.windowEnd(typeFactory, timeCol, interval);
           }
-          continue;
         }
-        p.add(inputRef);
-      }
+        return inputRef;
+      });
+      RelOptCluster cluster = scan.getCluster();
+      RelTraitSet jdbcTraitSet = scan.getTraitSet();
       JdbcProject jdbcProject =
-          new JdbcProject(scan.getCluster(), scan.getTraitSet(), scan, p, project.getRowType());
+          new JdbcProject(cluster, jdbcTraitSet, scan, projects, project.getRowType());
       //处理汇聚列表
-      List<AggregateCall> aggCallList = aggregation.getAggCallList();
-      ArrayList<AggregateCall> aggList = Lists.newArrayList();
-      for (AggregateCall aggregateCall : aggCallList) {
-        if (aggregateCall.getAggregation() instanceof SqlSumEmptyIsZeroAggFunction) {
-          aggList.add(
-              AggregateCall.create(SqlStdOperatorTable.SUM, aggregateCall.isDistinct(), aggregateCall.isApproximate(),
-                  aggregateCall.ignoreNulls(), aggregateCall.getArgList(), aggregateCall.filterArg,
-                  aggregateCall.distinctKeys, aggregateCall.collation,
-                  aggregateCall.type, aggregateCall.name));
-          continue;
-        }
-        aggList.add(aggregateCall);
-      }
       call.transformTo(
-          new JdbcAggregate(scan.getCluster(), scan.getTraitSet(), jdbcProject, aggregation.getGroupSet(),
+          new JdbcAggregate(cluster, jdbcTraitSet, jdbcProject, aggregation.getGroupSet(),
               aggregation.getGroupSets(),
-              aggList));
+              aggregation.getAggCallList()));
     }
   }
 
@@ -129,6 +118,10 @@ public class WindowAggregationRule extends RelRule<WindowAggregationRule.Config>
   }
 
   public interface SqlWindowStartEnd {
+
+    default RelDataType getType(RelDataTypeFactory typeFactory) {
+      return typeFactory.createSqlType(SqlTypeName.TIMESTAMP, 3);
+    }
 
     RexNode windowStart(RelDataTypeFactory typeFactory, RexNode timeCol, RexLiteral interval);
 

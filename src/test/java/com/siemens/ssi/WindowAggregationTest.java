@@ -1,22 +1,13 @@
 package com.siemens.ssi;
 
-import com.google.common.collect.Lists;
-import com.siemens.ssi.WindowAggregationRule.SqlWindowStartEnd;
 import java.sql.SQLException;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.plan.RelOptUtil;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;
 import org.apache.calcite.rel.RelNode;
 import org.apache.calcite.rel.RelRoot;
-import org.apache.calcite.rel.type.RelDataType;
-import org.apache.calcite.rel.type.RelDataTypeFactory;
-import org.apache.calcite.rex.RexBuilder;
-import org.apache.calcite.rex.RexLiteral;
-import org.apache.calcite.rex.RexNode;
 import org.apache.calcite.runtime.Hook;
 import org.apache.calcite.sql.SqlExplainLevel;
-import org.apache.calcite.sql.type.SqlTypeName;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -97,6 +88,18 @@ public class WindowAggregationTest extends CalciteTest {
     String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
         + "  TUMBLE (\n"
         + "    TABLE ch.orders,\n"
+        + "    DESCRIPTOR(time_stamp),\n"
+        + "    INTERVAL '1' YEAR ))"
+        + "group by window_start,window_end";
+    int n = executeQuery(sql);
+    assert 2 == n;
+  }
+
+  @Test
+  void everyYear2() throws SQLException {
+    String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+        + "  TUMBLE (\n"
+        + "    TABLE ms.orders,\n"
         + "    DESCRIPTOR(time_stamp),\n"
         + "    INTERVAL '1' YEAR ))"
         + "group by window_start,window_end";

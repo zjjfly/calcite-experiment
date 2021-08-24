@@ -14,9 +14,6 @@ import org.apache.calcite.sql.type.SqlOperandTypeInference;
 import org.apache.calcite.sql.type.SqlReturnTypeInference;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-/**
- *
- */
 public class SqlNativeFunction extends SqlFunction {
 
   public SqlNativeFunction(String name, SqlKind kind,

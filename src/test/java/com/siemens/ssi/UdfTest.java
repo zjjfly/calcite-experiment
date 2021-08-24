@@ -5,9 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.schema.impl.ScalarFunctionImpl;
 import org.junit.jupiter.api.Test;
 
-/**
- *
- */
 @Slf4j
 public class UdfTest extends CalciteTest {
 

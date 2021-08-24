@@ -4,9 +4,6 @@ import com.google.common.collect.Lists;
 import java.util.Collections;
 import org.apache.calcite.sql.dialect.ClickHouseSqlDialect;
 
-/**
- *
- */
 public class CustomRules {
 
   public static TableFunctionScanRule TABLE_FUNCTION_SCAN =
