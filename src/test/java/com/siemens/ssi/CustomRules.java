@@ -1,8 +1,9 @@
 package com.siemens.ssi;
 
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;
-import java.util.Collections;
 import org.apache.calcite.sql.dialect.ClickHouseSqlDialect;
+import org.apache.calcite.sql.dialect.MysqlSqlDialect;
 
 public class CustomRules {
 
@@ -10,6 +11,7 @@ public class CustomRules {
       TableFunctionScanRule.Config.DEFAULT.withMatchSchemas(Lists.newArrayList("ch")).toRule();
 
   public static WindowAggregationRule WINDOW_AGGREGATION = WindowAggregationRule.Config.DEFAULT.withSqlWindowStartEnd(
-      Collections.singletonMap(ClickHouseSqlDialect.class, new ClickHouseSqlWindowStartEnd())).toRule();
+      ImmutableBiMap.of(ClickHouseSqlDialect.class, new ClickHouseSqlWindowStartEnd(),
+          MysqlSqlDialect.class, new MySqlSqlWindowStartEnd())).toRule();
 
 }

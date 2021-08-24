@@ -9,6 +9,7 @@ import org.apache.calcite.rel.RelRoot;
 import org.apache.calcite.runtime.Hook;
 import org.apache.calcite.sql.SqlExplainLevel;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
@@ -29,82 +30,145 @@ public class WindowAggregationTest extends CalciteTest {
     });
   }
 
-  @Test
-  void every5Min() throws SQLException {
-    String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
-        + "  TUMBLE (\n"
-        + "    TABLE ch.orders,\n"
-        + "    DESCRIPTOR(time_stamp),\n"
-        + "    INTERVAL '5' MINUTE ))"
-        + "group by window_start,window_end";
-    int n = executeQuery(sql);
-    assert 5 == n;
+  @Nested
+  public class ClickHouseTests {
+
+    @Test
+    void every5Min() throws SQLException {
+      String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ch.orders,\n"
+          + "    DESCRIPTOR(time_stamp),\n"
+          + "    INTERVAL '5' MINUTE ))"
+          + "group by window_start,window_end";
+      int n = executeQuery(sql);
+      assert 5 == n;
+    }
+
+    @Test
+    void everyDAY() throws SQLException {
+      String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ch.orders,\n"
+          + "    DESCRIPTOR(time_stamp),\n"
+          + "    INTERVAL '1' DAY ))"
+          + "group by window_start,window_end";
+      int n = executeQuery(sql);
+      assert 4 == n;
+    }
+
+    @Test
+    void everyMonthWithoutRule() throws SQLException {
+      Hook.PLANNER.addThread((VolcanoPlanner planner) -> {
+        planner.removeRule(CustomRules.WINDOW_AGGREGATION);
+      });
+      String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ch.orders,\n"
+          + "    DESCRIPTOR(time_stamp),\n"
+          + "    INTERVAL '1' MONTH ))"
+          + "group by window_start,window_end";
+      int n = executeQuery(sql);
+      assert 6 == n;
+      Hook.PLANNER.addThread((VolcanoPlanner planner) -> {
+        planner.addRule(CustomRules.WINDOW_AGGREGATION);
+      });
+    }
+
+    @Test
+    void everyMonthWithRule() throws SQLException {
+      String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ch.orders,\n"
+          + "    DESCRIPTOR(time_stamp),\n"
+          + "    INTERVAL '1' MONTH ))"
+          + "group by window_start,window_end";
+      int n = executeQuery(sql);
+      assert 3 == n;
+    }
+
+    @Test
+    void everyYear() throws SQLException {
+      String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ch.orders,\n"
+          + "    DESCRIPTOR(time_stamp),\n"
+          + "    INTERVAL '1' YEAR ))"
+          + "group by window_start,window_end";
+      int n = executeQuery(sql);
+      assert 2 == n;
+    }
   }
 
-  @Test
-  void everyDAY() throws SQLException {
-    String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
-        + "  TUMBLE (\n"
-        + "    TABLE ch.orders,\n"
-        + "    DESCRIPTOR(time_stamp),\n"
-        + "    INTERVAL '1' DAY ))"
-        + "group by window_start,window_end";
-    int n = executeQuery(sql);
-    assert 4 == n;
-  }
+  @Nested
+  public class MySqlTests {
 
-  @Test
-  void everyMonthWithoutRule() throws SQLException {
-    Hook.PLANNER.addThread((VolcanoPlanner planner) -> {
-      planner.removeRule(CustomRules.WINDOW_AGGREGATION);
-    });
-    String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
-        + "  TUMBLE (\n"
-        + "    TABLE ch.orders,\n"
-        + "    DESCRIPTOR(time_stamp),\n"
-        + "    INTERVAL '1' MONTH ))"
-        + "group by window_start,window_end";
-    int n = executeQuery(sql);
-    assert 6 == n;
-    Hook.PLANNER.addThread((VolcanoPlanner planner) -> {
-      planner.addRule(CustomRules.WINDOW_AGGREGATION);
-    });
-  }
+    @Test
+    void every5Min() throws SQLException {
+      String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ms.orders,\n"
+          + "    DESCRIPTOR(time_stamp),\n"
+          + "    INTERVAL '5' MINUTE ))"
+          + "group by window_start,window_end";
+      int n = executeQuery(sql);
+      assert 5 == n;
+    }
 
-  @Test
-  void everyMonthWithRule() throws SQLException {
-    String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
-        + "  TUMBLE (\n"
-        + "    TABLE ch.orders,\n"
-        + "    DESCRIPTOR(time_stamp),\n"
-        + "    INTERVAL '1' MONTH ))"
-        + "group by window_start,window_end";
-    int n = executeQuery(sql);
-    assert 3 == n;
-  }
+    @Test
+    void everyDAY() throws SQLException {
+      String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ms.orders,\n"
+          + "    DESCRIPTOR(time_stamp),\n"
+          + "    INTERVAL '1' DAY ))"
+          + "group by window_start,window_end";
+      int n = executeQuery(sql);
+      assert 4 == n;
+    }
 
-  @Test
-  void everyYear() throws SQLException {
-    String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
-        + "  TUMBLE (\n"
-        + "    TABLE ch.orders,\n"
-        + "    DESCRIPTOR(time_stamp),\n"
-        + "    INTERVAL '1' YEAR ))"
-        + "group by window_start,window_end";
-    int n = executeQuery(sql);
-    assert 2 == n;
-  }
+    @Test
+    void everyMonthWithoutRule() throws SQLException {
+      Hook.PLANNER.addThread((VolcanoPlanner planner) -> {
+        planner.removeRule(CustomRules.WINDOW_AGGREGATION);
+      });
+      String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ms.orders,\n"
+          + "    DESCRIPTOR(time_stamp),\n"
+          + "    INTERVAL '1' MONTH ))"
+          + "group by window_start,window_end";
+      int n = executeQuery(sql);
+      assert 6 == n;
+      Hook.PLANNER.addThread((VolcanoPlanner planner) -> {
+        planner.addRule(CustomRules.WINDOW_AGGREGATION);
+      });
+    }
 
-  @Test
-  void everyYear2() throws SQLException {
-    String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
-        + "  TUMBLE (\n"
-        + "    TABLE ms.orders,\n"
-        + "    DESCRIPTOR(time_stamp),\n"
-        + "    INTERVAL '1' YEAR ))"
-        + "group by window_start,window_end";
-    int n = executeQuery(sql);
-    assert 2 == n;
+    @Test
+    void everyMonthWithRule() throws SQLException {
+      String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ms.orders,\n"
+          + "    DESCRIPTOR(time_stamp),\n"
+          + "    INTERVAL '1' MONTH ))"
+          + "group by window_start,window_end";
+      int n = executeQuery(sql);
+      assert 3 == n;
+    }
+
+    @Test
+    void everyYear() throws SQLException {
+      String sql = "SELECT sum(price) as price_sum,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ms.orders,\n"
+          + "    DESCRIPTOR(time_stamp),\n"
+          + "    INTERVAL '1' YEAR ))"
+          + "group by window_start,window_end";
+      int n = executeQuery(sql);
+      assert 2 == n;
+    }
+
   }
 
 }

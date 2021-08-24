@@ -61,7 +61,7 @@ public class WindowAggregationRule extends RelRule<WindowAggregationRule.Config>
       SqlDialect dialect = scan.jdbcTable.jdbcSchema.dialect;
       Map<Class<? extends SqlDialect>, SqlWindowStartEnd> sqlWindowStartEndMap = config.sqlWindowStartEnd();
       SqlWindowStartEnd sqlWindowStartEnd =
-          sqlWindowStartEndMap.getOrDefault(dialect.getClass(), new ClickHouseSqlWindowStartEnd());
+          sqlWindowStartEndMap.getOrDefault(dialect.getClass(), new MySqlSqlWindowStartEnd());
       List<RexNode> projects = project.getProjects();
       int size = scan.getRowType().getFieldList().size();
       //替换window_start和window_end的
