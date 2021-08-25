@@ -171,4 +171,41 @@ public class WindowAggregationTest extends CalciteTest {
 
   }
 
+  @Nested
+  public class BenchMarkTests {
+
+    @Test
+    @Benchmark
+    void withoutRule() throws SQLException {
+      Hook.PLANNER.addThread((VolcanoPlanner planner) -> {
+        planner.removeRule(CustomRules.WINDOW_AGGREGATION);
+      });
+      Hook.JAVA_PLAN.addThread((String s) -> {
+        log.info("generated code: " + s);
+      });
+      String sql = "SELECT count(0) as hit_count,max(RedirectCount) as max_age,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ch.hits,\n"
+          + "    DESCRIPTOR(EventTime),\n"
+          + "    INTERVAL '10' MINUTE ))"
+          + "group by window_start,window_end";
+      executeQuery(sql);
+      Hook.PLANNER.addThread((VolcanoPlanner planner) -> {
+        planner.addRule(CustomRules.WINDOW_AGGREGATION);
+      });
+    }
+
+    @Test
+    @Benchmark
+    void withRule() throws SQLException {
+      String sql = "SELECT count(0) as hit_count,max(RedirectCount) as max_age,window_start,window_end FROM TABLE(\n"
+          + "  TUMBLE (\n"
+          + "    TABLE ch.hits,\n"
+          + "    DESCRIPTOR(EventTime),\n"
+          + "    INTERVAL '10' MINUTE ))"
+          + "group by window_start,window_end";
+      executeQuery(sql);
+    }
+  }
+
 }

@@ -14,6 +14,7 @@ import org.apache.calcite.config.CalciteConnectionProperty;
 import org.apache.calcite.jdbc.CalciteConnection;
 import org.apache.calcite.runtime.Hook;
 import org.apache.calcite.schema.SchemaPlus;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -47,6 +48,11 @@ public abstract class CalciteTest {
     Hook.QUERY_PLAN.add((String s) -> {
       log.info("sql: " + s);
     });
+  }
+
+  @AfterAll
+  public void destroy() throws SQLException {
+    this.calciteConnection.close();
   }
 
   /**
