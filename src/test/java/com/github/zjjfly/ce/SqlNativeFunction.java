@@ -1,4 +1,4 @@
-package com.siemens.ssi;
+package com.github.zjjfly.ce;
 
 import java.util.List;
 import org.apache.calcite.rel.type.RelDataType;

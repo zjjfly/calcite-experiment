@@ -1,4 +1,4 @@
-package com.siemens.ssi;
+package com.github.zjjfly.ce;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;

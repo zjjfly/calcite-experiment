@@ -1,7 +1,6 @@
-package com.siemens.ssi;
+package com.github.zjjfly.ce;
 
 import com.google.common.collect.Lists;
-import com.siemens.ssi.WindowAggregationRule.SqlWindowStartEnd;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import org.apache.calcite.avatica.util.TimeUnit;
@@ -15,7 +14,7 @@ import org.apache.calcite.sql.fun.SqlStdOperatorTable;
 import org.apache.calcite.sql.type.IntervalSqlType;
 import org.apache.calcite.sql.type.SqlTypeName;
 
-public class MySqlSqlWindowStartEnd implements SqlWindowStartEnd {
+public class MySqlSqlWindowStartEnd implements WindowAggregationRule.SqlWindowStartEnd {
 
   /**
    * 构造类似下面的表达式 timestampadd(YEAR, floor(timestampdiff(YEAR, '1970-01-01', timeCol) / 3) * 3 , "1970-01-01")

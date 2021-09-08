@@ -1,4 +1,4 @@
-package com.siemens.ssi;
+package com.github.zjjfly.ce;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.METHOD;

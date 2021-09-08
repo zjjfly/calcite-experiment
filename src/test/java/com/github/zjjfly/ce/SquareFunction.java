@@ -1,4 +1,4 @@
-package com.siemens.ssi;
+package com.github.zjjfly.ce;
 
 public class SquareFunction {
 

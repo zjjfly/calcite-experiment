@@ -1,4 +1,4 @@
-package com.siemens.ssi;
+package com.github.zjjfly.ce;
 
 import com.mysql.cj.jdbc.Driver;
 import java.sql.Connection;

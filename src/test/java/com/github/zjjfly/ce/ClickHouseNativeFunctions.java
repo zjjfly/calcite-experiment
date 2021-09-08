@@ -1,4 +1,4 @@
-package com.siemens.ssi;
+package com.github.zjjfly.ce;
 
 import org.apache.calcite.sql.SqlKind;
 import org.apache.calcite.sql.SqlOperator;

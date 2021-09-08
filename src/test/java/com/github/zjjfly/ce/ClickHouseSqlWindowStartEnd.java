@@ -1,7 +1,7 @@
-package com.siemens.ssi;
+package com.github.zjjfly.ce;
 
 import com.google.common.collect.Lists;
-import com.siemens.ssi.WindowAggregationRule.SqlWindowStartEnd;
+import com.github.zjjfly.ce.WindowAggregationRule.SqlWindowStartEnd;
 import java.util.List;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rex.RexBuilder;

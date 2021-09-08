@@ -1,4 +1,4 @@
-package com.siemens.ssi;
+package com.github.zjjfly.ce;
 
 import java.sql.SQLException;
 import lombok.extern.slf4j.Slf4j;

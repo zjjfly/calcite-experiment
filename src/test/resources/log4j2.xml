@@ -16,7 +16,7 @@
   <loggers>
     <!--过滤掉spring和mybatis的一些无用的DEBUG信息-->
     <logger name="org.apache.calcite" level="INFO"></logger>
-    <logger name="com.siemens" level="INFO"></logger>
+    <logger name="com.github" level="INFO"></logger>
     <root level="INFO">
       <appender-ref ref="Console"/>
     </root>
