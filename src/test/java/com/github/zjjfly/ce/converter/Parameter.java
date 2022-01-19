@@ -1,7 +1,6 @@
 package com.github.zjjfly.ce.converter;
 
 import java.util.HashMap;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

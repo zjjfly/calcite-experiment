@@ -1,8 +1,7 @@
 package com.github.zjjfly.ce.common;
 
-import java.sql.SQLException;
-
 import com.github.zjjfly.ce.CalciteTest;
+import java.sql.SQLException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.plan.RelOptUtil;
 import org.apache.calcite.rel.RelNode;
@@ -23,10 +22,12 @@ public class ModifyTest extends CalciteTest {
     public void init() throws SQLException {
         super.init();
         Hook.CONVERTED.addThread((RelNode relNode) -> {
-            log.info("converted rel root:\n" + RelOptUtil.toString(relNode, SqlExplainLevel.ALL_ATTRIBUTES));
+            log.info("converted rel root:\n" + RelOptUtil.toString(relNode,
+                SqlExplainLevel.ALL_ATTRIBUTES));
         });
         Hook.PLAN_BEFORE_IMPLEMENTATION.addThread((RelRoot relRoot) -> {
-            log.info("optimized plan:\n" + RelOptUtil.toString(relRoot.rel, SqlExplainLevel.ALL_ATTRIBUTES));
+            log.info("optimized plan:\n" + RelOptUtil.toString(relRoot.rel,
+                SqlExplainLevel.ALL_ATTRIBUTES));
         });
     }
 

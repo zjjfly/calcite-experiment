@@ -3,7 +3,6 @@ package com.github.zjjfly.ce.rule;
 import com.github.zjjfly.ce.CalciteTest;
 import java.sql.SQLException;
 import java.util.Collections;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.plan.RelOptUtil;
 import org.apache.calcite.plan.volcano.VolcanoPlanner;

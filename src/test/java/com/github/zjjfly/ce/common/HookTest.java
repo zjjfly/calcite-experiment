@@ -3,7 +3,6 @@ package com.github.zjjfly.ce.common;
 import com.github.zjjfly.ce.CalciteTest;
 import java.sql.SQLException;
 import java.util.List;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.plan.RelOptLattice;
 import org.apache.calcite.plan.RelOptMaterialization;

@@ -1,7 +1,6 @@
 package com.github.zjjfly.ce.common;
 
 import java.util.List;
-
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlFunction;

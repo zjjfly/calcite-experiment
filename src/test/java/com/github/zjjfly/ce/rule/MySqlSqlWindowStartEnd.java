@@ -1,9 +1,8 @@
 package com.github.zjjfly.ce.rule;
 
+import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
-import com.google.common.collect.Lists;
 import org.apache.calcite.avatica.util.TimeUnit;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rel.type.RelDataTypeFactory;

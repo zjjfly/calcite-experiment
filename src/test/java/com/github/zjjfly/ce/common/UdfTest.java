@@ -2,7 +2,6 @@ package com.github.zjjfly.ce.common;
 
 import com.github.zjjfly.ce.CalciteTest;
 import java.sql.SQLException;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.schema.impl.ScalarFunctionImpl;
 import org.junit.jupiter.api.Test;
