@@ -1,4 +1,4 @@
-package com.github.zjjfly.ce;
+package com.github.zjjfly.ce.common;
 
 import java.util.List;
 

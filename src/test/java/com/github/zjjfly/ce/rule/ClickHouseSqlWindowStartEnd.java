@@ -1,8 +1,8 @@
-package com.github.zjjfly.ce;
+package com.github.zjjfly.ce.rule;
 
 import java.util.List;
 
-import com.github.zjjfly.ce.WindowAggregationRule.SqlWindowStartEnd;
+import com.github.zjjfly.ce.rule.WindowAggregationRule.SqlWindowStartEnd;
 import com.google.common.collect.Lists;
 import org.apache.calcite.rel.type.RelDataTypeFactory;
 import org.apache.calcite.rex.RexBuilder;

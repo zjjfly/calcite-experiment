@@ -1,5 +1,6 @@
-package com.github.zjjfly.ce;
+package com.github.zjjfly.ce.common;
 
+import com.github.zjjfly.ce.CalciteTest;
 import java.sql.SQLException;
 import java.util.List;
 

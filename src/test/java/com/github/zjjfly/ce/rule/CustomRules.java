@@ -1,4 +1,4 @@
-package com.github.zjjfly.ce;
+package com.github.zjjfly.ce.rule;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;

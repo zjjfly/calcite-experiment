@@ -1,4 +1,4 @@
-package com.github.zjjfly.ce;
+package com.github.zjjfly.ce.rule;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

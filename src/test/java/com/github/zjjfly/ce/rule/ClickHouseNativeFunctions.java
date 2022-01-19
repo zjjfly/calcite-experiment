@@ -1,5 +1,6 @@
-package com.github.zjjfly.ce;
+package com.github.zjjfly.ce.rule;
 
+import com.github.zjjfly.ce.common.SqlNativeFunction;
 import org.apache.calcite.sql.SqlKind;
 import org.apache.calcite.sql.SqlOperator;
 import org.apache.calcite.sql.type.OperandTypes;
