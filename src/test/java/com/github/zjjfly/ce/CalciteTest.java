@@ -1,15 +1,9 @@
 package com.github.zjjfly.ce;
 
 import com.mysql.cj.jdbc.Driver;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.adapter.jdbc.JdbcSchema;
+import org.apache.calcite.avatica.util.Casing;
 import org.apache.calcite.config.CalciteConnectionProperty;
 import org.apache.calcite.jdbc.CalciteConnection;
 import org.apache.calcite.runtime.Hook;
@@ -19,6 +13,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import ru.yandex.clickhouse.ClickHouseDriver;
+
+import java.sql.*;
+import java.util.Properties;
 
 @Slf4j
 @TestInstance(Lifecycle.PER_CLASS)
@@ -31,7 +28,8 @@ public abstract class CalciteTest {
     @BeforeAll
     public void init() throws SQLException {
         Properties info = new Properties();
-        info.put(CalciteConnectionProperty.CASE_SENSITIVE.name(), Boolean.FALSE.toString());
+        info.put(CalciteConnectionProperty.CASE_SENSITIVE.name(), Boolean.TRUE.toString());
+        info.put(CalciteConnectionProperty.UNQUOTED_CASING.name(), Casing.UNCHANGED.name());
         Connection connection = DriverManager.getConnection("jdbc:calcite:", info);
         calciteConnection = connection.unwrap(CalciteConnection.class);
         schema = calciteConnection.getRootSchema();
