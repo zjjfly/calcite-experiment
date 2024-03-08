@@ -14,7 +14,12 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import ru.yandex.clickhouse.ClickHouseDriver;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 @Slf4j
@@ -34,15 +39,15 @@ public abstract class CalciteTest {
         calciteConnection = connection.unwrap(CalciteConnection.class);
         schema = calciteConnection.getRootSchema();
         JdbcSchema mysqlSchema = JdbcSchema.create(schema, "ms",
-            JdbcSchema.dataSource("jdbc:mysql://localhost:13306/test", Driver.class.getName(),
-                "root", "123456"),
-            null, null);
+                JdbcSchema.dataSource("jdbc:mysql://localhost:13306/test", Driver.class.getName(),
+                        "root", "123456"),
+                null, null);
         schema.add("ms", mysqlSchema);
         JdbcSchema clickHouseSchema = JdbcSchema.create(schema, "ch",
-            JdbcSchema.dataSource(
-                "jdbc:clickhouse://localhost:18123?use_server_time_zone=false&use_time_zone=Asia/Shanghai",
-                ClickHouseDriver.class.getName(), "default", ""),
-            null, null);
+                JdbcSchema.dataSource(
+                        "jdbc:clickhouse://localhost:18123?use_server_time_zone=false&use_time_zone=Asia/Shanghai",
+                        ClickHouseDriver.class.getName(), "default", ""),
+                null, null);
         schema.add("ch", clickHouseSchema);
         Hook.QUERY_PLAN.add((String s) -> {
             log.info("sql: " + s);

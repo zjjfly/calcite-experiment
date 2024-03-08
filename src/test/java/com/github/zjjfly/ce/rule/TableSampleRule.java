@@ -16,7 +16,7 @@ import org.apache.calcite.sql.type.SqlTypeName;
 
 @Slf4j
 public class TableSampleRule extends RelRule<TableSampleRule.Config>
-    implements TransformationRule {
+        implements TransformationRule {
 
     /**
      * Creates a RelRule.
@@ -36,10 +36,10 @@ public class TableSampleRule extends RelRule<TableSampleRule.Config>
             RexBuilder rexBuilder = new RexBuilder(typeFactory);
             float percentage = samplingParameters.getSamplingPercentage();
             RelNode filter = RelOptUtil.createFilter(sample.getInput(),
-                Lists.newArrayList(rexBuilder.makeCall(SqlStdOperatorTable.LESS_THAN,
-                    Lists.newArrayList(rexBuilder.makeCall(SqlStdOperatorTable.RAND),
-                        rexBuilder.makeLiteral(percentage, typeFactory.createSqlType(
-                            SqlTypeName.DOUBLE))))));
+                    Lists.newArrayList(rexBuilder.makeCall(SqlStdOperatorTable.LESS_THAN,
+                            Lists.newArrayList(rexBuilder.makeCall(SqlStdOperatorTable.RAND),
+                                    rexBuilder.makeLiteral(percentage, typeFactory.createSqlType(
+                                            SqlTypeName.DOUBLE))))));
             call.transformTo(filter);
         }
     }
@@ -47,11 +47,11 @@ public class TableSampleRule extends RelRule<TableSampleRule.Config>
     public interface Config extends RelRule.Config {
 
         Config DEFAULT = EMPTY.as(Config.class)
-            .withOperandSupplier(
-                b0 -> b0.operand(Sample.class)
-                    .predicate(sample -> sample.getSamplingParameters().isBernoulli())
-                    .anyInputs())
-            .as(Config.class);
+                .withOperandSupplier(
+                        b0 -> b0.operand(Sample.class)
+                                .predicate(sample -> sample.getSamplingParameters().isBernoulli())
+                                .anyInputs())
+                .as(Config.class);
 
         @Override
         default TableSampleRule toRule() {

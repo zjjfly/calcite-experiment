@@ -1,8 +1,6 @@
 package com.github.zjjfly.ce.rule;
 
 import com.github.zjjfly.ce.RelOptExtUtil;
-import java.util.List;
-import java.util.Map;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.adapter.jdbc.JdbcRules.JdbcAggregate;
@@ -30,9 +28,12 @@ import org.apache.calcite.sql.type.SqlTypeName;
 import org.apache.calcite.util.ImmutableBeans;
 import org.apache.calcite.util.Util;
 
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 public class WindowAggregationRule extends RelRule<WindowAggregationRule.Config>
-    implements TransformationRule {
+        implements TransformationRule {
 
     /**
      * Creates a RelRule.
@@ -61,9 +62,9 @@ public class WindowAggregationRule extends RelRule<WindowAggregationRule.Config>
             JdbcTableScan scan = (JdbcTableScan) tableScan.get(0);
             SqlDialect dialect = scan.jdbcTable.jdbcSchema.dialect;
             Map<Class<? extends SqlDialect>, SqlWindowStartEnd> sqlWindowStartEndMap =
-                config.sqlWindowStartEnd();
+                    config.sqlWindowStartEnd();
             SqlWindowStartEnd sqlWindowStartEnd =
-                sqlWindowStartEndMap.getOrDefault(dialect.getClass(), new MySqlSqlWindowStartEnd());
+                    sqlWindowStartEndMap.getOrDefault(dialect.getClass(), new MySqlSqlWindowStartEnd());
             List<RexNode> projects = project.getProjects();
             int size = scan.getRowType().getFieldList().size();
             //替换window_start和window_end的
@@ -82,33 +83,33 @@ public class WindowAggregationRule extends RelRule<WindowAggregationRule.Config>
             RelOptCluster cluster = scan.getCluster();
             RelTraitSet jdbcTraitSet = scan.getTraitSet();
             JdbcProject jdbcProject =
-                new JdbcProject(cluster, jdbcTraitSet, scan, projects, project.getRowType());
+                    new JdbcProject(cluster, jdbcTraitSet, scan, projects, project.getRowType());
             //处理汇聚列表
             call.transformTo(
-                new JdbcAggregate(cluster, jdbcTraitSet, jdbcProject, aggregation.getGroupSet(),
-                    aggregation.getGroupSets(),
-                    aggregation.getAggCallList()));
+                    new JdbcAggregate(cluster, jdbcTraitSet, jdbcProject, aggregation.getGroupSet(),
+                            aggregation.getGroupSets(),
+                            aggregation.getAggCallList()));
         }
     }
 
     public interface Config extends RelRule.Config {
 
         Config DEFAULT = EMPTY.as(Config.class)
-            .withOperandSupplier(b0 -> b0.operand(LogicalAggregate.class).oneInput(
-                b1 -> b1.operand(LogicalProject.class)
-                    .oneInput(b2 -> b2.operand(LogicalTableFunctionScan.class)
-                        .predicate(logicalTableFunctionScan -> {
-                            RexNode call = logicalTableFunctionScan.getCall();
-                            if (call instanceof RexCall) {
-                                RexCall c = (RexCall) call;
-                                SqlOperator op = c.op;
-                                return op == SqlStdOperatorTable.TUMBLE
-                                    || op == SqlStdOperatorTable.HOP
-                                    || op == SqlStdOperatorTable.SESSION;
-                            }
-                            return false;
-                        }).anyInputs())))
-            .as(Config.class);
+                .withOperandSupplier(b0 -> b0.operand(LogicalAggregate.class).oneInput(
+                        b1 -> b1.operand(LogicalProject.class)
+                                .oneInput(b2 -> b2.operand(LogicalTableFunctionScan.class)
+                                        .predicate(logicalTableFunctionScan -> {
+                                            RexNode call = logicalTableFunctionScan.getCall();
+                                            if (call instanceof RexCall) {
+                                                RexCall c = (RexCall) call;
+                                                SqlOperator op = c.op;
+                                                return op == SqlStdOperatorTable.TUMBLE
+                                                        || op == SqlStdOperatorTable.HOP
+                                                        || op == SqlStdOperatorTable.SESSION;
+                                            }
+                                            return false;
+                                        }).anyInputs())))
+                .as(Config.class);
 
         @Override
         default WindowAggregationRule toRule() {
@@ -116,7 +117,7 @@ public class WindowAggregationRule extends RelRule<WindowAggregationRule.Config>
         }
 
         Config withSqlWindowStartEnd(
-            Map<Class<? extends SqlDialect>, SqlWindowStartEnd> sqlWindowStartEnd);
+                Map<Class<? extends SqlDialect>, SqlWindowStartEnd> sqlWindowStartEnd);
 
         @ImmutableBeans.Property
         Map<Class<? extends SqlDialect>, SqlWindowStartEnd> sqlWindowStartEnd();

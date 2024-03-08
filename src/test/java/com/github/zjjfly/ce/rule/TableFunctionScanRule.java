@@ -1,9 +1,6 @@
 package com.github.zjjfly.ce.rule;
 
 import com.google.common.collect.Lists;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.avatica.util.TimeUnitRange;
 import org.apache.calcite.plan.RelOptRuleCall;
@@ -30,9 +27,13 @@ import org.apache.calcite.sql.type.SqlTypeName;
 import org.apache.calcite.sql.type.SqlTypeUtil;
 import org.apache.calcite.util.ImmutableBeans;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 public class TableFunctionScanRule extends RelRule<TableFunctionScanRule.Config>
-    implements TransformationRule {
+        implements TransformationRule {
 
     /**
      * Creates a RelRule.
@@ -62,7 +63,7 @@ public class TableFunctionScanRule extends RelRule<TableFunctionScanRule.Config>
             return;
         }
         LogicalTableScan tableScan =
-            LogicalTableScan.create(rel.getCluster(), table, new ArrayList<>());
+                LogicalTableScan.create(rel.getCluster(), table, new ArrayList<>());
         List<RexNode> projects = new ArrayList<>();
         RelDataType rowType = table.getRowType();
         List<RelDataTypeField> fieldList = rowType.getFieldList();
@@ -76,43 +77,43 @@ public class TableFunctionScanRule extends RelRule<TableFunctionScanRule.Config>
         TimeUnitRange timeUnitRange = intervalSqlType.getIntervalQualifier().timeUnitRange;
         //TODO 根据value动态的拼装为CEIL(TIMESTAMPADD(MONTH, -1 * (MONTH(time) % n),time),MONTH)
         projects.add(rexBuilder.makeCall(type.getField("window_start", true, false).getType(),
-            SqlStdOperatorTable.FLOOR,
-            Lists.newArrayList(rowTime, rexBuilder.makeFlag(
-                timeUnitRange))));
+                SqlStdOperatorTable.FLOOR,
+                Lists.newArrayList(rowTime, rexBuilder.makeFlag(
+                        timeUnitRange))));
         //TODO 根据value动态的拼装为CEIL(TIMESTAMPADD(MONTH, n - (MONTH(time) % n),time)),MONTH)
         projects.add(rexBuilder.makeCall(type.getField("window_end", true, false).getType(),
-            SqlStdOperatorTable.CEIL,
-            Lists.newArrayList(rowTime, rexBuilder.makeFlag(
-                timeUnitRange))));
+                SqlStdOperatorTable.CEIL,
+                Lists.newArrayList(rowTime, rexBuilder.makeFlag(
+                        timeUnitRange))));
         LogicalProject logicalProject =
-            LogicalProject.create(tableScan, tableScan.getHints(), projects, type);
+                LogicalProject.create(tableScan, tableScan.getHints(), projects, type);
         call.transformTo(logicalProject);
     }
 
     public interface Config extends RelRule.Config {
 
         Config DEFAULT = EMPTY.as(Config.class)
-            .withOperandSupplier(b0 -> b0.operand(LogicalTableFunctionScan.class)
-                .predicate(logicalTableFunctionScan -> {
-                    RexNode call = logicalTableFunctionScan.getCall();
-                    if (call instanceof RexCall) {
-                        RexCall c = (RexCall) call;
-                        SqlOperator op = c.op;
-                        if (op == SqlStdOperatorTable.TUMBLE || op == SqlStdOperatorTable.HOP
-                            || op == SqlStdOperatorTable.SESSION) {
-                            List<RexNode> operands = c.getOperands();
-                            RexLiteral op1 = (RexLiteral) operands.get(operands.size() - 1);
-                            if (SqlTypeUtil.isInterval(op1.getType())) {
-                                IntervalSqlType type = (IntervalSqlType) op1.getType();
-                                SqlTypeName sqlTypeName = type.getSqlTypeName();
-                                return sqlTypeName == SqlTypeName.INTERVAL_MONTH
-                                    || sqlTypeName == SqlTypeName.INTERVAL_YEAR;
+                .withOperandSupplier(b0 -> b0.operand(LogicalTableFunctionScan.class)
+                        .predicate(logicalTableFunctionScan -> {
+                            RexNode call = logicalTableFunctionScan.getCall();
+                            if (call instanceof RexCall) {
+                                RexCall c = (RexCall) call;
+                                SqlOperator op = c.op;
+                                if (op == SqlStdOperatorTable.TUMBLE || op == SqlStdOperatorTable.HOP
+                                        || op == SqlStdOperatorTable.SESSION) {
+                                    List<RexNode> operands = c.getOperands();
+                                    RexLiteral op1 = (RexLiteral) operands.get(operands.size() - 1);
+                                    if (SqlTypeUtil.isInterval(op1.getType())) {
+                                        IntervalSqlType type = (IntervalSqlType) op1.getType();
+                                        SqlTypeName sqlTypeName = type.getSqlTypeName();
+                                        return sqlTypeName == SqlTypeName.INTERVAL_MONTH
+                                                || sqlTypeName == SqlTypeName.INTERVAL_YEAR;
+                                    }
+                                }
                             }
-                        }
-                    }
-                    return false;
-                }).anyInputs())
-            .as(Config.class);
+                            return false;
+                        }).anyInputs())
+                .as(Config.class);
 
         @Override
         default TableFunctionScanRule toRule() {

@@ -1,8 +1,6 @@
 package com.github.zjjfly.ce.common;
 
 import com.github.zjjfly.ce.CalciteTest;
-import java.sql.SQLException;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.calcite.plan.RelOptLattice;
 import org.apache.calcite.plan.RelOptMaterialization;
@@ -15,6 +13,9 @@ import org.apache.calcite.tools.Program;
 import org.apache.calcite.tools.Programs;
 import org.apache.calcite.util.Holder;
 import org.junit.jupiter.api.Test;
+
+import java.sql.SQLException;
+import java.util.List;
 
 @Slf4j
 public class HookTest extends CalciteTest {
@@ -37,8 +38,8 @@ public class HookTest extends CalciteTest {
                 chain = Programs.standard();
             }
             holder.set(Programs.sequence((RelOptPlanner planner, RelNode rel, RelTraitSet
-                    requiredOutputTraits, List<RelOptMaterialization> materializations, List<RelOptLattice> lattices) -> rel,
-                chain));
+                            requiredOutputTraits, List<RelOptMaterialization> materializations, List<RelOptLattice> lattices) -> rel,
+                    chain));
         });
 
         String sql = "select * from ms.users";

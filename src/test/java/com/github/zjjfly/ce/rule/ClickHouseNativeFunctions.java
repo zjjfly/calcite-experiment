@@ -13,15 +13,15 @@ public class ClickHouseNativeFunctions {
      * to_start_of_interval(time,INTERVAL 1 DAY)
      */
     public static final SqlOperator TO_START_OF_INTERVAL =
-        new SqlNativeFunction("toStartOfInterval", SqlKind.OTHER_FUNCTION, ReturnTypes.TIMESTAMP,
-            null,
-            OperandTypes.family(SqlTypeFamily.DATETIME, SqlTypeFamily.DATETIME_INTERVAL));
+            new SqlNativeFunction("toStartOfInterval", SqlKind.OTHER_FUNCTION, ReturnTypes.TIMESTAMP,
+                    null,
+                    OperandTypes.family(SqlTypeFamily.DATETIME, SqlTypeFamily.DATETIME_INTERVAL));
 
     /**
      * timestamp_add(time,INTERVAL 1 DAY)
      */
     public static final SqlOperator TIMESTAMP_ADD =
-        new SqlNativeFunction("timestamp_add", SqlKind.OTHER_FUNCTION, ReturnTypes.TIMESTAMP, null,
-            OperandTypes.family(SqlTypeFamily.DATETIME, SqlTypeFamily.DATETIME_INTERVAL));
+            new SqlNativeFunction("timestamp_add", SqlKind.OTHER_FUNCTION, ReturnTypes.TIMESTAMP, null,
+                    OperandTypes.family(SqlTypeFamily.DATETIME, SqlTypeFamily.DATETIME_INTERVAL));
 
 }

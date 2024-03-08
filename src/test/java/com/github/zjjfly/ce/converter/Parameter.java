@@ -1,9 +1,10 @@
 package com.github.zjjfly.ce.converter;
 
-import java.util.HashMap;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import java.util.HashMap;
 
 /**
  * @author Zi JunJie(junjie.zi@siemens.com)

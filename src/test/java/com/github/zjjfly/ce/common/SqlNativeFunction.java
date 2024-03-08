@@ -1,6 +1,5 @@
 package com.github.zjjfly.ce.common;
 
-import java.util.List;
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlFunction;
@@ -14,45 +13,47 @@ import org.apache.calcite.sql.type.SqlOperandTypeInference;
 import org.apache.calcite.sql.type.SqlReturnTypeInference;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.List;
+
 public class SqlNativeFunction extends SqlFunction {
 
     public SqlNativeFunction(String name, SqlKind kind,
-        @Nullable SqlReturnTypeInference returnTypeInference,
-        @Nullable SqlOperandTypeInference operandTypeInference,
-        @Nullable SqlOperandTypeChecker operandTypeChecker) {
+                             @Nullable SqlReturnTypeInference returnTypeInference,
+                             @Nullable SqlOperandTypeInference operandTypeInference,
+                             @Nullable SqlOperandTypeChecker operandTypeChecker) {
         super(name, kind, returnTypeInference, operandTypeInference, operandTypeChecker,
-            SqlFunctionCategory.SYSTEM);
+                SqlFunctionCategory.SYSTEM);
     }
 
     public SqlNativeFunction(SqlIdentifier sqlIdentifier,
-        @Nullable SqlReturnTypeInference returnTypeInference,
-        @Nullable SqlOperandTypeInference operandTypeInference,
-        @Nullable SqlOperandTypeChecker operandTypeChecker,
-        @Nullable List<RelDataType> paramTypes) {
+                             @Nullable SqlReturnTypeInference returnTypeInference,
+                             @Nullable SqlOperandTypeInference operandTypeInference,
+                             @Nullable SqlOperandTypeChecker operandTypeChecker,
+                             @Nullable List<RelDataType> paramTypes) {
         super(sqlIdentifier, returnTypeInference, operandTypeInference, operandTypeChecker,
-            paramTypes,
-            SqlFunctionCategory.SYSTEM);
+                paramTypes,
+                SqlFunctionCategory.SYSTEM);
     }
 
     protected SqlNativeFunction(String name,
-        @Nullable SqlIdentifier sqlIdentifier, SqlKind kind,
-        @Nullable SqlReturnTypeInference returnTypeInference,
-        @Nullable SqlOperandTypeInference operandTypeInference,
-        @Nullable SqlOperandTypeChecker operandTypeChecker,
-        @Nullable List<RelDataType> paramTypes) {
+                                @Nullable SqlIdentifier sqlIdentifier, SqlKind kind,
+                                @Nullable SqlReturnTypeInference returnTypeInference,
+                                @Nullable SqlOperandTypeInference operandTypeInference,
+                                @Nullable SqlOperandTypeChecker operandTypeChecker,
+                                @Nullable List<RelDataType> paramTypes) {
         super(name, sqlIdentifier, kind, returnTypeInference, operandTypeInference,
-            operandTypeChecker, paramTypes,
-            SqlFunctionCategory.SYSTEM);
+                operandTypeChecker, paramTypes,
+                SqlFunctionCategory.SYSTEM);
     }
 
     protected SqlNativeFunction(String name,
-        @Nullable SqlIdentifier sqlIdentifier, SqlKind kind,
-        @Nullable SqlReturnTypeInference returnTypeInference,
-        @Nullable SqlOperandTypeInference operandTypeInference,
-        @Nullable SqlOperandTypeChecker operandTypeChecker) {
+                                @Nullable SqlIdentifier sqlIdentifier, SqlKind kind,
+                                @Nullable SqlReturnTypeInference returnTypeInference,
+                                @Nullable SqlOperandTypeInference operandTypeInference,
+                                @Nullable SqlOperandTypeChecker operandTypeChecker) {
         super(name, sqlIdentifier, kind, returnTypeInference, operandTypeInference,
-            operandTypeChecker,
-            SqlFunctionCategory.SYSTEM);
+                operandTypeChecker,
+                SqlFunctionCategory.SYSTEM);
     }
 
     @Override

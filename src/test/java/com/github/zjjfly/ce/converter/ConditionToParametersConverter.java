@@ -2,9 +2,6 @@ package com.github.zjjfly.ce.converter;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import org.apache.calcite.sql.SqlBasicCall;
 import org.apache.calcite.sql.SqlIdentifier;
 import org.apache.calcite.sql.SqlLiteral;
@@ -13,6 +10,10 @@ import org.apache.calcite.sql.SqlOperator;
 import org.apache.calcite.sql.fun.SqlStdOperatorTable;
 import org.apache.calcite.sql.parser.SqlParseException;
 import org.apache.calcite.sql.parser.SqlParser;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Zi JunJie(junjie.zi@siemens.com)
@@ -50,6 +51,14 @@ public class ConditionToParametersConverter {
         });
     }
 
+    public static void main(String[] args) {
+        String condition = "id = 1 or (id =2 and name ='x')";
+        ConditionToParametersConverter converter = new ConditionToParametersConverter();
+        List<Parameter> parameters = converter.convert(condition,
+                Lists.newArrayList());
+        System.out.println(parameters);
+    }
+
     private void merge(List<Parameter> result, List<Parameter> convert) {
         if (result.isEmpty()) {
             result.addAll(convert);
@@ -82,14 +91,6 @@ public class ConditionToParametersConverter {
             e.printStackTrace();
         }
         return parameters;
-    }
-
-    public static void main(String[] args) {
-        String condition = "id = 1 or (id =2 and name ='x')";
-        ConditionToParametersConverter converter = new ConditionToParametersConverter();
-        List<Parameter> parameters = converter.convert(condition,
-            Lists.newArrayList());
-        System.out.println(parameters);
     }
 
 }
